@@ -18,6 +18,10 @@ body {
     font-size: 24px;
 }
 
+.alerts-list-item {
+    cursor: pointer;
+}
+
 #wrapper {
     width: 100%;
 }

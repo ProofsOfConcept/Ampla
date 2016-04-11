@@ -129,15 +129,19 @@ function createMarkers() {
                 var result = lines[i].split(';');
                 var latLng = new google.maps.LatLng(result[3], result[4]);
                 addMarker(latLng, lines[i]);
-                addAlertsList(result);
+                addAlertsList(result, i);
             }
         }
     });
 }
 
-function addAlertsList (linha) {
+function markerClick(indice) {
+    google.maps.event.trigger(markers[indice], 'click');
+}
+
+function addAlertsList (linha, indice) {
     var icon = linha[7] === "on" ? "fa-check" : "fa-times"
-    $("#alerts-list").append("<a href='#' class='list-group-item'>"+
+    $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
     "<i class='fa " + icon + " fa-fw'></i> "+ linha[0] +
     "<span class='pull-right text-muted small'><em>4 minutes ago</em>"+
     "</span>"+

@@ -13,6 +13,11 @@ body {
     height: 500px;
 }
 
+.login-title {
+    color: #DB4437;
+    font-size: 24px;
+}
+
 #wrapper {
     width: 100%;
 }

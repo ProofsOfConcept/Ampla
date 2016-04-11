@@ -117,7 +117,7 @@ google.maps.Map.prototype.clearMarkers = function () {
 
 function createMarkers() {
 
-    $.ajax('js/AMPLA_LAT_LOG.csv').success(function (data) {
+    $.ajax('../js/AMPLA_LAT_LOG.csv').success(function (data) {
         var lines = data.split('\n');
         mudaBotao(false);
         if (data.length === 0)

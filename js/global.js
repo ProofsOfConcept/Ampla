@@ -129,12 +129,22 @@ function createMarkers() {
                 var result = lines[i].split(';');
                 var latLng = new google.maps.LatLng(result[3], result[4]);
                 addMarker(latLng, lines[i]);
+                addAlertsList(result);
             }
         }
     });
 }
 
-function ajustarAosPontos() {
+function addAlertsList (linha) {
+    var icon = linha[7] === "on" ? "fa-check" : "fa-times"
+    $("#alerts-list").append("<a href='#' class='list-group-item'>"+
+    "<i class='fa " + icon + " fa-fw'></i> "+ linha[0] +
+    "<span class='pull-right text-muted small'><em>4 minutes ago</em>"+
+    "</span>"+
+    "</a>");
+}
+
+function ajustarAosPontos () {
     for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
         bounds.extend(markersPositions[a]);
     }

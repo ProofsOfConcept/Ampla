@@ -130,16 +130,16 @@ function createMarkers() {
                 var latLng = new google.maps.LatLng(result[3], result[4]);
                 addMarker(latLng, lines[i]);
             }
-
-            for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
-                bounds.extend(markersPositions[a]);
-            }
-            map.fitBounds(bounds);
-
         }
     });
 }
 
+function ajustarAosPontos() {
+    for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
+        bounds.extend(markersPositions[a]);
+    }
+    map.fitBounds(bounds);
+}
 
 function mudaBotao(onOff) {
     if (onOff) {

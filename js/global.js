@@ -53,9 +53,9 @@ function addMarker(location, data) {
     var iconUrl;
     var result = data.split(';');
     if (result[7] === 'on') {
-        iconUrl = "img/antena_on.png";
+        iconUrl = "../img/antena_on.png";
     } else {
-        iconUrl = "img/antena_off.png";
+        iconUrl = "../img/antena_off.png";
     }
 
     var marker = new google.maps.Marker({

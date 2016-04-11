@@ -72,7 +72,7 @@ var app = {
         var marker = new google.maps.Marker({
             position: location,
             map: map,
-            icon: iconBase + 'pegman.png',
+            icon: '../img/pegman.png',
         });
     }
 };

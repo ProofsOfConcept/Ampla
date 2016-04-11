@@ -50,13 +50,15 @@ function addMarker(location, data) {
     markersPositions.push(location);
     //var dataBR = data[0].substring(3,6) + data[0].substring(0,2) + data[0].substring(5);
     //var gpsTime = new Date(Date.parse(dataBR));
-    var iconUrl;
     var result = data.split(';');
-    if (result[7] === 'on') {
+
+    if (result[7] == 1) {
         iconUrl = "../img/antena_on.png";
-    } else {
-        iconUrl = "../img/antena_off.png";
+    }else{
+        iconUrl= "../img/antena_off.png";
     }
+
+    console.log(iconUrl);
 
     var marker = new google.maps.Marker({
         position: location,
@@ -67,10 +69,11 @@ function addMarker(location, data) {
 
 
     var content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-        "Código: " + result[1] + "</br>" +
+        "Código: " + result[0] + "</br>" +
+        "Endereço: " + result[1] + "</br>" +
             //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
-        "Velocidade: " + result[5] + " Km/h</br>" +
-        "Direção: " + result[6] + "</br>" +
+        "Data: " + result[5] + "</br>" +
+        "Data Solução: " + result[6] + "</br>" +
         "</div>";
 
     attachMessage(marker, content, map);

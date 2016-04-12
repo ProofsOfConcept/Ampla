@@ -155,7 +155,7 @@ function markerClick(indice) {
 }
 
 function addAlertsList (linha, indice) {
-    var icon = linha[7] === "on" ? "fa-check" : "fa-times"
+    var icon = linha[7] == 1 ? "fa-check" : "fa-times";
     $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
     "<i class='fa " + icon + " fa-fw'></i> "+ linha[0] +
     "<span class='pull-right text-muted small'><em>4 minutes ago</em>"+

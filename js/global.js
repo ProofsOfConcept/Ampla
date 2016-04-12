@@ -59,8 +59,6 @@ function addMarker(location, data) {
         iconUrl= "../img/antena_off.png";
     }
 
-    console.log(iconUrl);
-
     var marker = new google.maps.Marker({
         position: location,
         map: map,

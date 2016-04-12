@@ -88,7 +88,7 @@ function createComboEstados() {
         estados = data.estados;
         $("#cbestados").append("<option value=''> -- Estado -- </option>");
         for(var i in estados) {
-            $("#cbestados").append("<option value='" + estados[i].sigla + "'>" + estados[i].nome + "</option>");
+            $("#cbestados").append("<option value='" + i + "'>" + estados[i].nome + "</option>");
         }
     });
 }
@@ -232,7 +232,17 @@ $(document).ready(function () {
 
     $("#cbestados").change(function (event) {
         $("#cbestados option:selected" ).each(function () {
-            console.log($(this).val());
+            var indice = $(this).val();
+            if(indice === "") {
+                $(".cb-cidades").fadeOut();
+            } else {
+                var cidades = estados[indice].cidades;
+                $("#cbcidades").append("<option value=''> -- Cidade -- </option>");
+                for(var j = 0;j < cidades.length; j++) {
+                    $("#cbcidades").append("<option value='" + j + "'>" + cidades[j] + "</option>");
+                }
+                $(".cb-cidades").fadeIn();
+            }
         });
     });
 

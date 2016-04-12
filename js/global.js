@@ -229,7 +229,9 @@ function gravarOpcoes() {
 $(document).ready(function () {
 
     $("#cbestados").change(function (event) {
+
         $("#cbestados option:selected" ).each(function () {
+            $("#cbcidades").html("");
             var indice = $(this).val();
             if(indice === "") {
                 $(".cb-cidades").fadeOut();
@@ -241,6 +243,16 @@ $(document).ready(function () {
                 }
                 $(".cb-cidades").fadeIn();
             }
+        });
+    });
+
+});
+
+$(document).ready(function () {
+
+    $("#cbcidades").change(function (event) {
+        $("#cbcidades option:selected" ).each(function () {
+            console.log($(this).val());
         });
     });
 

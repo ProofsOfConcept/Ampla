@@ -244,6 +244,7 @@ $(document).ready(function () {
     });
 
     $("#btn-login").click(function () {
+        console.log('brn-login');
         $("#frm-login").submit();
 
     });

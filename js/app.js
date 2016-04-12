@@ -67,6 +67,8 @@ var app = {
         });
 
         infowindow = new google.maps.InfoWindow();
+
+        createComboEstados();
     },
     showDevicePosition: function (location) {
         var marker = new google.maps.Marker({

@@ -18,6 +18,7 @@ var bikeMarkersPositions = [];
 var infowindow = null;
 var pontosMarkers = [];
 var pontosMarkersPositions = [];
+var estados;
 
 function addBikeMarker(location, data) {
     bikeMarkersPositions.push(location);
@@ -79,6 +80,17 @@ function addMarker(location, data) {
     attachMessage(marker, content, map);
 
     markers.push(marker);
+}
+
+function createComboEstados() {
+    $("#cbestados").html("");
+    $.ajax('../js/estados-cidades.json').success(function (data) {
+        estados = data.estados;
+        $("#cbestados").append("<option value=''> -- Estado -- </option>");
+        for(var i in estados) {
+            $("#cbestados").append("<option value='" + estados[i].sigla + "'>" + estados[i].nome + "</option>");
+        }
+    });
 }
 
 function attachMessage(marker, content, mapa) {
@@ -218,58 +230,10 @@ function gravarOpcoes() {
 
 $(document).ready(function () {
 
-    lerCookie("dadosRJ");
-
-    $("#searchBox").submit(function (event) {
-        event.preventDefault();
-        $("#busLine").blur();
-        mudaBotao(true);
-        createMarkers();
-        desenhaShape();
-        desenharPontos();
-    });
-
-    $("#searchBox input").hover(
-        function () {
-            $(this).css("background", "rgba(255,255,255,.25)");
-        },
-        function () {
-            $(this).css("background", "rgba(255,255,255,.15)");
-        }
-    );
-
-    $(".menu-box").click(function () {
-        $("#menu").toggleClass("open");
-        $("#menuBox").toggleClass("openmenu");
-    });
-
-    $("#btn-login").click(function () {
-        console.log('brn-login');
-        $("#frm-login").submit();
-
-    });
-
-    $(".menu-box").hover(
-        function () {
-            $(this).css("opacity", "1.0");
-        },
-        function () {
-            $(this).css("opacity", "0.6");
-        }
-    );
-
-    $(".lista li").click(function () {
-        var id = $(this).attr("id");
-        var span = $(this).children("span");
-        if ($(span).hasClass("ckon")) {
-            $(span).removeClass("ckon");
-            $(span).addClass("ckoff");
-        } else {
-            $(span).removeClass("ckoff");
-            $(span).addClass("ckon");
-        }
-        gravarOpcoes();
-        atualizaMapa();
+    $("#cbestados").change(function (event) {
+        $("#cbestados option:selected" ).each(function () {
+            console.log($(this).val());
+        });
     });
 
 });

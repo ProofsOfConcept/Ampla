@@ -22,6 +22,21 @@ body {
     cursor: pointer;
 }
 
+.map-selects {
+    position: absolute;
+    top: 60px;
+    left: 46px;
+    width: 50%;
+}
+
+.cb-cidades {
+    display: none;
+}
+
+.col-curta {
+    padding: 0 2px;
+}
+
 #wrapper {
     width: 100%;
 }

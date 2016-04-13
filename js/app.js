@@ -27,6 +27,9 @@ var app = {
             });
         } else {
             app.createMap();
+
+
+
         }
     },
     geolocationSuccess: function (position) {
@@ -58,7 +61,7 @@ var app = {
         var location = new google.maps.LatLng(-22.818943, -43.045118);
         map = new google.maps.Map(mapDiv, {
             center: location,
-            zoom: 12,
+            zoom: 8,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             streetViewControl: false,
@@ -69,6 +72,7 @@ var app = {
         infowindow = new google.maps.InfoWindow();
 
         createComboEstados();
+
     },
     showDevicePosition: function (location) {
         var marker = new google.maps.Marker({
@@ -76,5 +80,7 @@ var app = {
             map: map,
             icon: '../img/pegman.png',
         });
+
     }
+
 };

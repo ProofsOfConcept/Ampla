@@ -246,7 +246,17 @@ $(document).ready(function () {
         });
     });
 
+    $("#btn-login").click(function(){
+        $('#lbl-erro').html('');
+        if(($("#email").val() === 'ampla@ampla.com.br') && ($("#password").val()==='ampla')){
+            console.log("feito");
+            $("#frm-login").submit();
+        }
+        $('#lbl-erro').html("E-mail ou senha inválidos");
+    });
+
 });
+
 
 $(document).ready(function () {
 

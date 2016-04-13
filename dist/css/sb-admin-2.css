@@ -11,6 +11,7 @@ body {
 .map-canvas {
     width: 100%;
     height: 500px;
+    boder-solid:1px red;
 }
 
 .login-title {

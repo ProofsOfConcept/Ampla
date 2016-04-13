@@ -39,7 +39,7 @@ var app = {
         app.createMap();
         app.showDevicePosition(userLocation);
         // espera a criação do mapa
-        setTimeout(createMarkers(), 100);
+        //setTimeout(createMarkers(), 100);
     },
     geolocationError: function (error) {
 
@@ -61,7 +61,7 @@ var app = {
         var location = new google.maps.LatLng(-22.818943, -43.045118);
         map = new google.maps.Map(mapDiv, {
             center: location,
-            zoom: 8,
+            zoom: 6,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             streetViewControl: false,

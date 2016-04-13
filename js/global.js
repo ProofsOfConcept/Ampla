@@ -52,8 +52,6 @@ function addMarker(location, data) {
     //var dataBR = data[0].substring(3,6) + data[0].substring(0,2) + data[0].substring(5);
     //var gpsTime = new Date(Date.parse(dataBR));
     var result = data.split(';');
-
-    console.log('----'+ result[7]);
     if (result[7]===undefined || result[7] == 1) {
         iconUrl = "../img/antena_on.png";
     }else{
@@ -74,6 +72,36 @@ function addMarker(location, data) {
             //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
         "Data: " + result[5] + "</br>" +
         "Data Solução: " + result[6] + "</br>" +
+        "</div>";
+
+    attachMessage(marker, content, map);
+
+    markers.push(marker);
+}
+
+
+function addMarkerSimple(location, data) {
+    markersPositions.push(location);
+    //var dataBR = data[0].substring(3,6) + data[0].substring(0,2) + data[0].substring(5);
+    //var gpsTime = new Date(Date.parse(dataBR));
+    var result = data.split(';');
+    if (result[7]===undefined || result[7] == 1) {
+        iconUrl = "../img/antena_on.png";
+    }else{
+        iconUrl= "../img/antena_off.png";
+    }
+
+    var marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: result[1] + " (" + result[0] + ")",
+        icon: new google.maps.MarkerImage(iconUrl)
+    });
+
+
+    var content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
+        "Código: " + result[3] + "</br>" +
+        "Endereço: " + result[4] + "</br>" +
         "</div>";
 
     attachMessage(marker, content, map);
@@ -146,13 +174,13 @@ function createMarkers() {
                 addAlertsList(result, i);
             }
         }
+
     });
+
 }
 
-
 function createMarkersByCidade(cidade) {
-    console.log(cidade);
-    $.ajax('../js/CLARO_SITES_LAT_LONG.csv').success(function (data) {
+    $.ajax('../js/CLARO_SITES_LAT_LOG.csv').success(function (data) {
         var lines = data.split('\n');
         mudaBotao(false);
         if (data.length === 0)
@@ -162,17 +190,31 @@ function createMarkersByCidade(cidade) {
             clearMarkersPositions();
             for (var i  in lines) {
                 var result = lines[i].split(';');
-
-                if(result[0] === cidade){
-                    var latLng = new google.maps.LatLng(result[3], result[4]);
-                    addMarker(latLng, lines[i]);
+                if(result[0].toUpperCase() === cidade.toUpperCase()){
+                    var latLng = new google.maps.LatLng(result[1], result[2]);
+                    addMarkerSimple(latLng, lines[i]);
                     addAlertsList(result, i);
                 }
             }
         }
+
     });
 }
 
+
+function replaceSpecialChars(str)
+{
+    str = str.replace(/[ÀÁÂÃÄÅ]/,"A");
+    str = str.replace(/[àáâãäå]/,"a");
+    str = str.replace(/[ÈÉÊË]/,"E");
+    str = str.replace(/[Ç]/,"C");
+    str = str.replace(/[ç]/,"c");
+    str = str.replace(/[Íí]/,"i");
+    str = str.replace(/[Úú]/,"u");
+    str = str.replace(/[Óó]/,"o");
+
+    return str;
+}
 
 
 function markerClick(indice) {
@@ -266,7 +308,7 @@ $(document).ready(function () {
                 var cidades = estados[indice].cidades;
                 $("#cbcidades").append("<option value=''> -- Cidade -- </option>");
                 for(var j = 0;j < cidades.length; j++) {
-                    $("#cbcidades").append("<option value='" + cidades[j] + "'>" + cidades[j] + "</option>");
+                    $("#cbcidades").append("<option value='" + replaceSpecialChars(cidades[j]) + "'>" + cidades[j] + "</option>");
                 }
                 $(".cb-cidades").fadeIn();
             }

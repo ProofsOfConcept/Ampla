@@ -53,7 +53,8 @@ function addMarker(location, data) {
     //var gpsTime = new Date(Date.parse(dataBR));
     var result = data.split(';');
 
-    if (result[7] == 1) {
+    console.log('----'+ result[7]);
+    if (result[7]===undefined || result[7] == 1) {
         iconUrl = "../img/antena_on.png";
     }else{
         iconUrl= "../img/antena_off.png";
@@ -148,6 +149,32 @@ function createMarkers() {
     });
 }
 
+
+function createMarkersByCidade(cidade) {
+    console.log(cidade);
+    $.ajax('../js/CLARO_SITES_LAT_LONG.csv').success(function (data) {
+        var lines = data.split('\n');
+        mudaBotao(false);
+        if (data.length === 0)
+            console.log("nenhum dado");
+        else {
+            setAllMap(null);
+            clearMarkersPositions();
+            for (var i  in lines) {
+                var result = lines[i].split(';');
+
+                if(result[0] === cidade){
+                    var latLng = new google.maps.LatLng(result[3], result[4]);
+                    addMarker(latLng, lines[i]);
+                    addAlertsList(result, i);
+                }
+            }
+        }
+    });
+}
+
+
+
 function markerClick(indice) {
     google.maps.event.trigger(markers[indice], 'click');
 }
@@ -239,7 +266,7 @@ $(document).ready(function () {
                 var cidades = estados[indice].cidades;
                 $("#cbcidades").append("<option value=''> -- Cidade -- </option>");
                 for(var j = 0;j < cidades.length; j++) {
-                    $("#cbcidades").append("<option value='" + j + "'>" + cidades[j] + "</option>");
+                    $("#cbcidades").append("<option value='" + cidades[j] + "'>" + cidades[j] + "</option>");
                 }
                 $(".cb-cidades").fadeIn();
             }
@@ -247,12 +274,10 @@ $(document).ready(function () {
     });
 
     $("#btn-login").click(function(){
-        $('#lbl-erro').html('');
         if(($("#email").val() === 'ampla@ampla.com.br') && ($("#password").val()==='ampla')){
             console.log("feito");
             $("#frm-login").submit();
         }
-        $('#lbl-erro').html("E-mail ou senha inválidos");
     });
 
 });
@@ -263,6 +288,9 @@ $(document).ready(function () {
     $("#cbcidades").change(function (event) {
         $("#cbcidades option:selected" ).each(function () {
             console.log($(this).val());
+            if($(this).val()){
+                createMarkersByCidade($(this).val());
+            }
         });
     });
 

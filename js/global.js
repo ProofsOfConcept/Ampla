@@ -202,6 +202,7 @@ function createMarkersByCidade(cidade) {
     }
 
     $.ajax(url).success(function (data) {
+        var resultado =  Papa.parse(data, {delimiter : ";"});
         var lines = data.split('\n');
         mudaBotao(false);
         if (data.length === 0)
@@ -210,13 +211,13 @@ function createMarkersByCidade(cidade) {
             setAllMap(null);
             clearMarkersPositions();
             var index = -1;
+
             for (var i  in lines) {
                 var result = lines[i].split(';');
                 if(result[0].toUpperCase() === cidade.toUpperCase()){
                     index++;
                     var latLng = new google.maps.LatLng(result[1], result[2]);
                     addMarkerSimple(latLng, lines[i]);
-                    console.log(result);
                     addAlertsList(result, index);
                 }
             }

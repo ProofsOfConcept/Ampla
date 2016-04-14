@@ -38,6 +38,11 @@ body {
     padding: 0 2px;
 }
 
+.notification-list {
+    overflow: auto;
+    max-height: 480px;
+}
+
 #wrapper {
     width: 100%;
 }

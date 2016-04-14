@@ -85,7 +85,7 @@ function addMarkerSimple(location, data) {
     //var dataBR = data[0].substring(3,6) + data[0].substring(0,2) + data[0].substring(5);
     //var gpsTime = new Date(Date.parse(dataBR));
     var result = data.split(';');
-    if (result[7]===undefined || result[7] == 1) {
+    if (result[5]===undefined || result[5]) {
         iconUrl = "../img/antena_on.png";
     }else{
         iconUrl= "../img/antena_off.png";
@@ -94,15 +94,28 @@ function addMarkerSimple(location, data) {
     var marker = new google.maps.Marker({
         position: location,
         map: map,
-        title: result[1] + " (" + result[0] + ")",
+        title:  " (" + result[3] + ")",
         icon: new google.maps.MarkerImage(iconUrl)
     });
+
 
 
     var content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
         "Código: " + result[3] + "</br>" +
         "Endereço: " + result[4] + "</br>" +
         "</div>";
+
+    if(result[5]){
+
+        content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
+            "Código: " + result[3] + "</br>" +
+            "Endereço: " + result[4] + "</br>" +
+                //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
+            "Data: " + result[5] + "</br>" +
+            "Data Solução: " + result[6] + "</br>" +
+            "</div>";
+    }
+
 
     attachMessage(marker, content, map);
 
@@ -180,7 +193,15 @@ function createMarkers() {
 }
 
 function createMarkersByCidade(cidade) {
-    $.ajax('../js/CLARO_SITES_LAT_LOG.csv').success(function (data) {
+
+    var location =  window.location.pathname;
+    var url = '../js/CLARO_SITES_LAT_LOG.csv';
+
+    if(location.indexOf('monitoramento') > 0){
+        url = '../js/AlarmesHistoricos_2016.csv'
+    }
+
+    $.ajax(url).success(function (data) {
         var lines = data.split('\n');
         mudaBotao(false);
         if (data.length === 0)
@@ -188,12 +209,15 @@ function createMarkersByCidade(cidade) {
         else {
             setAllMap(null);
             clearMarkersPositions();
+            var index = -1;
             for (var i  in lines) {
                 var result = lines[i].split(';');
                 if(result[0].toUpperCase() === cidade.toUpperCase()){
+                    index++;
                     var latLng = new google.maps.LatLng(result[1], result[2]);
                     addMarkerSimple(latLng, lines[i]);
-                    addAlertsList(result, i);
+                    console.log(result);
+                    addAlertsList(result, index);
                 }
             }
         }
@@ -218,14 +242,15 @@ function replaceSpecialChars(str)
 
 
 function markerClick(indice) {
+    console.log(indice);
     google.maps.event.trigger(markers[indice], 'click');
 }
 
 function addAlertsList (linha, indice) {
-    var icon = linha[7] == 1 ? "fa-check" : "fa-times";
+    var icon = linha[6] != "" ? "fa-check" : "fa-times";
     $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
-    "<i class='fa " + icon + " fa-fw'></i> "+ linha[0] +
-    "<span class='pull-right text-muted small'><em>4 minutes ago</em>"+
+    "<i class='fa " + icon + " fa-fw'></i> "+ linha[3] +
+    "<span class='pull-right text-muted small'><em>" + linha[6]+" </em>"+
     "</span>"+
     "</a>");
 }
@@ -329,7 +354,6 @@ $(document).ready(function () {
 
     $("#cbcidades").change(function (event) {
         $("#cbcidades option:selected" ).each(function () {
-            console.log($(this).val());
             if($(this).val()){
                 createMarkersByCidade($(this).val());
             }

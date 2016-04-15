@@ -146,7 +146,7 @@ function replaceSpecialChars(str)
     str = str.replace(/[ÚÙÛÜ]/,"U");
     str = str.replace(/[úùûü]/,"u");
     str = str.replace(/[Ç]/,"C");
-    console.log(str);
+
     return str;
 }
 

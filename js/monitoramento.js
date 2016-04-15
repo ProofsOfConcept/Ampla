@@ -35,11 +35,11 @@ function addMarker(latLng, result){
 
 
         content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-            "CÃ³digo: " + result[3] + "</br>" +
-            "EndereÃ§o: " + result[4] + "</br>" +
+            "Codigo: " + result[3] + "</br>" +
+            "Endereço: " + result[4] + "</br>" +
                 //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
             "Data: " + result[5] + "</br>" +
-            "Data SoluÃ§Ã£o: " + result[6] + "</br>" +
+            "Data Solução: " + result[6] + "</br>" +
             "</div>";
     attachMessage(marker, content, map);
     markers.push(marker);
@@ -63,6 +63,7 @@ function verificarAlarmes() {
 function drawMarkers() {
     setAllMap(null);
     clearMarkersPositions();
+    deleteMarkers();
     clearAlertList();
     for(var z in results) {
         var result = results[z];

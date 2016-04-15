@@ -244,13 +244,15 @@ function markerClick(indice) {
     google.maps.event.trigger(markers[indice], 'click');
 }
 
+
 function addAlertsList (linha, indice) {
     var icon = linha[6] != "" ? "fa-check" : "fa-times";
+    var classe  = linha[6] != "" ? "color:#00CB00" : "color:#E73131";
     $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
-    "<i class='fa " + icon + " fa-fw'></i> "+ linha[3] +
-    "<span class='pull-right text-muted small'><em>" + linha[6]+" </em>"+
-    "</span>"+
-    "</a>");
+        "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ linha[3] +
+        "<span class='pull-right text-muted small'><em>" + linha[6]+" </em>"+
+        "</span>"+
+        "</a>");
 }
 
 function ajustarAosPontos () {
@@ -339,16 +341,11 @@ $(document).ready(function () {
     });
 
     $("#btn-login").click(function(){
-        if(($("#email").val() === 'ampla@ampla.com.br') && ($("#password").val()==='ampla')){
+        if(($("#email").val() === 'ampla@ampla.com.br') && ($("#password").val()==='hitss')){
             console.log("feito");
             $("#frm-login").submit();
         }
     });
-
-});
-
-
-$(document).ready(function () {
 
     $("#cbcidades").change(function (event) {
         $("#cbcidades option:selected" ).each(function () {
@@ -359,6 +356,7 @@ $(document).ready(function () {
     });
 
 });
+
 
 function atualizaMapa() {
     if (checkOpcoes) {

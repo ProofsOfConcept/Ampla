@@ -29,8 +29,7 @@ var sitesFiltro = [];
 function addMarker(latLng, result){
     markersPositions.push(latLng);
     var iconUrl;
-    console.log("--->"+  result[3] + result[6]);
-    if (result[6] === undefined || result[6] !='') {
+    if (result[6] === undefined || result[6] !="") {
         iconUrl = "../img/antena_on.png";
     }else{
         iconUrl= "../img/antena_off.png";
@@ -44,7 +43,6 @@ function addMarker(latLng, result){
         icon: new google.maps.MarkerImage(iconUrl)
     });
 
-    if(result[5]){
 
         content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
             "Código: " + result[3] + "</br>" +
@@ -53,7 +51,6 @@ function addMarker(latLng, result){
             "Data: " + result[5] + "</br>" +
             "Data Solução: " + result[6] + "</br>" +
             "</div>";
-    }
     attachMessage(marker, content, map);
     markers.push(marker);
 }
@@ -91,6 +88,7 @@ function errorAlarmes(response) {
 }
 
 function errorSites(response) {
+    console.log('Ocorreu um erro ao tentar buscar sites');
 }
 
 function createComboEstados() {
@@ -247,7 +245,6 @@ $(document).ready(function () {
 
     $("#btn-login").click(function(){
         if(($("#email").val() === 'ampla@ampla.com.br') && ($("#password").val()==='ampla')){
-            console.log("feito");
             $("#frm-login").submit();
         }
     });

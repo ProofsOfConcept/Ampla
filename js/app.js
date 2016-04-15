@@ -73,7 +73,9 @@ var app = {
 
         createComboEstados();
         carregarSites();
-
+        setInterval(function () {
+            verificarAlarmes()
+        }, 15000);
 
     },
     showDevicePosition: function (location) {

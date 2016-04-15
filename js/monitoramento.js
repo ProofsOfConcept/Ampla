@@ -7,23 +7,14 @@ var map;
 var markers = [];
 var markersPositions = [];
 var bounds = new google.maps.LatLngBounds();
-var markerColors = ['red', 'yellow', 'green'];
-var loadTimeout = 0;
-var currentLine = '';
 var userLocation = false;
-var modalOpen = false;
 var browserSupportFlag = new Boolean();
-var linhas = [];
-var checkOpcoes;
-var trafficLayer = new google.maps.TrafficLayer();
-var bikeMarkers = [];
-var bikeMarkersPositions = [];
 var infowindow = null;
-var pontosMarkers = [];
-var pontosMarkersPositions = [];
 var estados;
 var sites =[];
 var sitesFiltro = [];
+var cidadeSelecionada;
+var estadoSelecionado;
 
 
 function addMarker(latLng, result){
@@ -37,7 +28,6 @@ function addMarker(latLng, result){
 
     var marker = new google.maps.Marker({
         position: latLng,
-        position: latLng,
         map: map,
         title:  " (" + result[3] + ")",
         icon: new google.maps.MarkerImage(iconUrl)
@@ -45,11 +35,11 @@ function addMarker(latLng, result){
 
 
         content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-            "Código: " + result[3] + "</br>" +
-            "Endereço: " + result[4] + "</br>" +
+            "CÃ³digo: " + result[3] + "</br>" +
+            "EndereÃ§o: " + result[4] + "</br>" +
                 //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
             "Data: " + result[5] + "</br>" +
-            "Data Solução: " + result[6] + "</br>" +
+            "Data SoluÃ§Ã£o: " + result[6] + "</br>" +
             "</div>";
     attachMessage(marker, content, map);
     markers.push(marker);
@@ -64,8 +54,10 @@ function successSites(response) {
 }
 
 function verificarAlarmes() {
-    clearAlertList();
-    $.ajax('../js/AlarmesHistoricos_2016.csv').then(successAlarmes, errorAlarmes);
+    if(estadoSelecionado && cidadeSelecionada) {
+        clearAlertList();
+        $.ajax('../js/AlarmesHistoricos_2016.csv').then(successAlarmes, errorAlarmes);
+    }
 }
 
 function drawMarkers() {
@@ -95,7 +87,7 @@ function createComboEstados() {
     $("#cbestados").html("");
     $.ajax('../js/estados-cidades.json').success(function (data) {
         estados = data.estados;
-        $("#cbestados").append("<option value=''> -- Estado -- </option>");
+        $("#cbestados").append("<option value=''>-- Estado --</option>");
         for(var i in estados) {
             $("#cbestados").append("<option value='" + i + "'>" + estados[i].nome + "</option>");
         }
@@ -142,14 +134,14 @@ google.maps.Map.prototype.clearMarkers = function () {
 
 function replaceSpecialChars(str)
 {
-    str = str.replace(/[ÀÁÂÃÄÅ]/,"A");
-    str = str.replace(/[àáâãäå]/,"a");
-    str = str.replace(/[ÈÉÊË]/,"E");
-    str = str.replace(/[Ç]/,"C");
-    str = str.replace(/[ç]/,"c");
-    str = str.replace(/[Íí]/,"i");
-    str = str.replace(/[Úú]/,"u");
-    str = str.replace(/[Óó]/,"o");
+    str = str.replace(/[Ã€Ã?Ã‚ÃƒÃ„Ã…]/,"A");
+    str = str.replace(/[Ã Ã¡Ã¢Ã£Ã¤Ã¥]/,"a");
+    str = str.replace(/[ÃˆÃ‰ÃŠÃ‹]/,"E");
+    str = str.replace(/[Ã‡]/,"C");
+    str = str.replace(/[Ã§]/,"c");
+    str = str.replace(/[Ã?Ã­]/,"i");
+    str = str.replace(/[ÃšÃº]/,"u");
+    str = str.replace(/[Ã“Ã³]/,"o");
 
     return str;
 }
@@ -169,61 +161,6 @@ function addAlertsList (linha, indice) {
         "</a>");
 }
 
-
-function mudaBotao(onOff) {
-    if (onOff) {
-        $(".icon").attr("src", "img/flipflop.gif");
-    } else {
-        $(".icon").attr("src", "img/searchw.png");
-    }
-}
-
-function gerarCookie(strCookie, strValor, lngDias) {
-    /*
-     $.cookie(strCookie, strValor, {
-     expires : lngDias
-     });
-     */
-    localStorage.setItem(strCookie, strValor);
-}
-
-function mudaClass(span, valor) {
-    if (valor == "ck ckoff") {
-        $(span).removeClass("ckon");
-        $(span).addClass("ckoff");
-    } else {
-        $(span).removeClass("ckoff");
-        $(span).addClass("ckon");
-    }
-}
-
-function lerCookie(nomeCookie) {
-    //var piraque = $.cookie(nomeCookie);
-    var piraque = localStorage[nomeCookie];
-    if (piraque) {
-        checkOpcoes = JSON.parse(piraque);
-        //tg tj pt
-        mudaClass($("#tg").children("span"), checkOpcoes.tg);
-        mudaClass($("#tj").children("span"), checkOpcoes.tj);
-        mudaClass($("#pt").children("span"), checkOpcoes.pt);
-        mudaClass($("#br").children("span"), checkOpcoes.br);
-    }
-}
-
-
-function gravarOpcoes() {
-    var options = {};
-    $(".lista li").each(function (index) {
-        var id = $(this).attr("id");
-        var span = $(this).children("span");
-        var classe = span.attr('class');
-        options[id] = classe;
-    });
-    var json = JSON.stderingify(options);
-    checkOpcoes = options;
-    gerarCookie("dadosRJ", json, 30);
-}
-
 $(document).ready(function () {
 
     $("#cbestados").change(function (event) {
@@ -234,8 +171,9 @@ $(document).ready(function () {
             if(indice === "") {
                 $(".cb-cidades").fadeOut();
             } else {
+                estadoSelecionado = estados[indice];
                 var cidades = estados[indice].cidades;
-                $("#cbcidades").append("<option value=''> -- Cidade -- </option>");
+                $("#cbcidades").append("<option value=''>-- Cidade --</option>");
                 for(var j = 0;j < cidades.length; j++) {
                     $("#cbcidades").append("<option value='" + replaceSpecialChars(cidades[j]) + "'>" + cidades[j] + "</option>");
                 }
@@ -252,74 +190,16 @@ $(document).ready(function () {
 
     $("#cbcidades").change(function (event) {
         $("#cbcidades option:selected" ).each(function () {
+            cidadeSelecionada = null;
             if($(this).val()){
+                cidadeSelecionada = $(this).val();
                 filterSitesByMunicipio($(this).val());
                 verificarAlarmes();
-                setInterval(function () {
-                    verificarAlarmes()
-                }, 15000);
             }
         });
     });
 
 });
-
-
-
-function atualizaMapa() {
-    if (checkOpcoes) {
-        if (checkOpcoes.tg == "ck ckon") {
-            trafficLayer.setMap(map);
-        } else {
-            trafficLayer.setMap(null);
-        }
-
-        if (checkOpcoes.tj == "ck ckon") {
-            if (currentLine) {
-                desenhaShape();
-            }
-        } else {
-            limparCoordenadas();
-        }
-
-        if (checkOpcoes.br == "ck ckon") {
-            desenharBikeRio();
-        } else {
-            limparBikeRio();
-        }
-
-        if (checkOpcoes.pt == "ck ckon") {
-            desenharPontos();
-        } else {
-            limparPontos();
-        }
-
-    }
-}
-
-function limparBikeRio() {
-    for (var i = 0; i < bikeMarkers.length; i++) {
-        bikeMarkers[i].setMap(null);
-    }
-    bikeMarkers = [];
-    bikeMarkersPositions = [];
-}
-
-function limparPontos() {
-    for (var i = 0; i < pontosMarkers.length; i++) {
-        pontosMarkers[i].setMap(null);
-    }
-    pontosMarkers = [];
-    pontosMarkersPositions = [];
-}
-
-function limparCoordenadas() {
-    for (var i = 0; i < linhas.length; i++) {
-        if (linhas) {
-            linhas[i].setMap(null);
-        }
-    }
-}
 
 function filterSitesByMunicipio(codMunicipio){
    var resultado = sites.filter(function(data) {
@@ -328,7 +208,6 @@ function filterSitesByMunicipio(codMunicipio){
     });
     sitesFiltro = resultado;
 }
-
 
 function successAlarmes(response) {
     var dados = Papa.parse(response, {delimiter: ";"}).data;
@@ -345,20 +224,16 @@ function successAlarmes(response) {
             results.push(resultado[resultado.length - 1]);
         }
     }
-    drawMarkers();
-    ajustarAosPontos();
+    if(sitesFiltro[0] && results[0]) {
+        drawMarkers();
+        ajustarAosPontos();
+    }
 }
 
 function ajustarAosPontos () {
+    bounds = new google.maps.LatLngBounds();
     for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
         bounds.extend(markersPositions[a]);
     }
     map.fitBounds(bounds);
 }
-
-
-
-
-
-
-

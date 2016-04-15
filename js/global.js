@@ -226,15 +226,18 @@ function createMarkersByCidade(cidade) {
 
 function replaceSpecialChars(str)
 {
-    str = str.replace(/[ÀÁÂÃÄÅ]/,"A");
-    str = str.replace(/[àáâãäå]/,"a");
-    str = str.replace(/[ÈÉÊË]/,"E");
+    str = str.replace(/[ÁÀÃÂÄ]/,"A");
+    str = str.replace(/[áàãâä]/,"a");
+    str = str.replace(/[éèêë]/,"e");
+    str = str.replace(/[ÉÈÊË]/,"E");
+    str = str.replace(/[íìîï]/,"i");
+    str = str.replace(/[ÍÌÎÏ]/,"I");
+    str = str.replace(/[ÓÒÕÔÖ]/,"O");
+    str = str.replace(/[óòõôö]/,"o");
+    str = str.replace(/[ÚÙÛÜ]/,"U");
+    str = str.replace(/[úùûü]/,"u");
     str = str.replace(/[Ç]/,"C");
-    str = str.replace(/[ç]/,"c");
-    str = str.replace(/[Íí]/,"i");
-    str = str.replace(/[Úú]/,"u");
-    str = str.replace(/[Óó]/,"o");
-
+   console.log(str);
     return str;
 }
 

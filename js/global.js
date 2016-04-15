@@ -19,6 +19,7 @@ var infowindow = null;
 var pontosMarkers = [];
 var pontosMarkersPositions = [];
 var estados;
+var sites =[];
 
 function addBikeMarker(location, data) {
     bikeMarkersPositions.push(location);
@@ -196,10 +197,6 @@ function createMarkersByCidade(cidade) {
 
     var location =  window.location.pathname;
     var url = '../js/CLARO_SITES_LAT_LOG.csv';
-
-    if(location.indexOf('monitoramento') > 0){
-        url = '../js/AlarmesHistoricos_2016.csv'
-    }
 
     $.ajax(url).success(function (data) {
         var resultado =  Papa.parse(data, {delimiter : ";"});
@@ -497,4 +494,14 @@ function desenhaShape() {
             });
 
     }
+}
+
+function carregarSites(){
+    $.ajax('../js/CLARO_SITES_LAT_LOG.csv').then(successSites,errorSites);
+}
+
+function successSites(response) {
+    sites = Papa.parse(response, {delimiter: ";"}).data;
+}
+function errorSites(response) {
 }

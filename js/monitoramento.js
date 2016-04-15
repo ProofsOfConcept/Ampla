@@ -2,21 +2,17 @@
  * Created by ricardo.oliveira on 14/04/2016.
  */
 
-var allSites = [];
-var alertas = [];
 var results = [];
 var map;
 var markers = [];
 var markersPositions = [];
 var bounds = new google.maps.LatLngBounds();
-var iconBase = "img/"; //'https://maps.google.com/mapfiles/kml/shapes/';
 var markerColors = ['red', 'yellow', 'green'];
 var loadTimeout = 0;
 var currentLine = '';
 var userLocation = false;
 var modalOpen = false;
 var browserSupportFlag = new Boolean();
-var arrayCores = ["#FF0000", "#0000FF", "#00FF00", "#FF0000", "#00FF00", "#0000FF", "#FF0000", "#0000FF"];
 var linhas = [];
 var checkOpcoes;
 var trafficLayer = new google.maps.TrafficLayer();
@@ -26,107 +22,74 @@ var infowindow = null;
 var pontosMarkers = [];
 var pontosMarkersPositions = [];
 var estados;
+var sites =[];
+var sitesFiltro = [];
 
-function addBikeMarker(location, data) {
-    bikeMarkersPositions.push(location);
 
-    var iconUrl = iconBase + "bikeriopin.png";
-    //"BAIRRO","ESTACAO","CODIGO","ENDERECO","NUMERO","LATITUDE","LONGITUDE"
-    var marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title: data[3],
-        icon: new google.maps.MarkerImage(iconUrl)
-    });
-
-    marker.info = new google.maps.InfoWindow({
-        content: '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-        "Bairro: " + data[0] + "</br>" +
-        "Estação: " + data[1] + "</br>" +
-        "Endereço: " + data[3] + "</br>" +
-        "</div>"
-    });
-    google.maps.event.addListener(marker, 'click', function () {
-        marker.info.close();
-        marker.info.open(map, marker);
-    });
-
-    bikeMarkers.push(marker);
-}
-
-function addMarker(location, data) {
-    markersPositions.push(location);
-    //var dataBR = data[0].substring(3,6) + data[0].substring(0,2) + data[0].substring(5);
-    //var gpsTime = new Date(Date.parse(dataBR));
-    var result = data.split(';');
-    if (result[7]===undefined || result[7] == 1) {
+function addMarker(latLng, result){
+    markersPositions.push(latLng);
+    var iconUrl;
+    if (result[6] === undefined || result[6] !='') {
         iconUrl = "../img/antena_on.png";
     }else{
         iconUrl= "../img/antena_off.png";
     }
 
     var marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title: result[1] + " (" + result[0] + ")",
-        icon: new google.maps.MarkerImage(iconUrl)
-    });
-
-
-    var content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-        "Código: " + result[0] + "</br>" +
-        "Endereço: " + result[1] + "</br>" +
-            //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
-        "Data: " + result[5] + "</br>" +
-        "Data Solução: " + result[6] + "</br>" +
-        "</div>";
-
-    attachMessage(marker, content, map);
-
-    markers.push(marker);
-}
-
-
-function addMarkerSimple(location, data) {
-    markersPositions.push(location);
-    //var dataBR = data[0].substring(3,6) + data[0].substring(0,2) + data[0].substring(5);
-    //var gpsTime = new Date(Date.parse(dataBR));
-    var result = data.split(';');
-    if (result[5]===undefined || result[5]) {
-        iconUrl = "../img/antena_on.png";
-    }else{
-        iconUrl= "../img/antena_off.png";
-    }
-
-    var marker = new google.maps.Marker({
-        position: location,
+        position: latLng,
+        position: latLng,
         map: map,
         title:  " (" + result[3] + ")",
         icon: new google.maps.MarkerImage(iconUrl)
     });
 
-
-
-    var content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-        "Código: " + result[3] + "</br>" +
-        "Endereço: " + result[4] + "</br>" +
-        "</div>";
-
     if(result[5]){
 
         content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-            "Código: " + result[3] + "</br>" +
-            "Endereço: " + result[4] + "</br>" +
+            "CÃ³digo: " + result[3] + "</br>" +
+            "EndereÃ§o: " + result[4] + "</br>" +
                 //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
             "Data: " + result[5] + "</br>" +
-            "Data Solução: " + result[6] + "</br>" +
+            "Data SoluÃ§Ã£o: " + result[6] + "</br>" +
             "</div>";
     }
-
-
     attachMessage(marker, content, map);
-
     markers.push(marker);
+}
+
+function carregarSites(){
+    $.ajax('../js/CLARO_SITES_LAT_LOG.csv').then(successSites,errorSites);
+}
+
+function successSites(response) {
+   sites = Papa.parse(response, {delimiter: ";"}).data;
+}
+
+function verificarAlarmes() {
+    clearAlertList();
+    $.ajax('../js/AlarmesHistoricos_2016.csv').then(successAlarmes, errorAlarmes);
+}
+
+function drawMarkers() {
+    setAllMap(null);
+    clearMarkersPositions();
+    clearAlertList();
+    for(var z in results) {
+        var result = results[z];
+        var latLng = new google.maps.LatLng(result[1], result[2]);
+        addMarker(latLng, result);
+        addAlertsList(result, z);
+    }
+}
+
+function clearAlertList(){
+    $("#alerts-list").html('');
+}
+
+function errorAlarmes(response) {
+}
+
+function errorSites(response) {
 }
 
 function createComboEstados() {
@@ -177,73 +140,17 @@ google.maps.Map.prototype.clearMarkers = function () {
     this.markers = [];
 };
 
-/*function createMarkers() {
-
-    $.ajax('../js/AMPLA_LAT_LOG.csv').success(function (data) {
-        var lines = data.split('\n');
-        mudaBotao(false);
-        if (data.length === 0)
-            console.log("nenhum dado");
-        else {
-            setAllMap(null);
-            clearMarkersPositions();
-            for (var i  in lines) {
-                var result = lines[i].split(';');
-                var latLng = new google.maps.LatLng(result[3], result[4]);
-                addMarker(latLng, lines[i]);
-                addAlertsList(result, i);
-            }
-        }
-
-    });
-
-}*/
-
-function createMarkersByCidade(cidade) {
-
-    var location =  window.location.pathname;
-    var url = '../js/CLARO_SITES_LAT_LOG.csv';
-
-    if(location.indexOf('monitoramento') > 0){
-        url = '../js/AlarmesHistoricos_2016.csv'
-    }
-
-    $.ajax(url).success(function (data) {
-        var resultado =  Papa.parse(data, {delimiter : ";"});
-        var lines = data.split('\n');
-        mudaBotao(false);
-        if (data.length === 0)
-            console.log("nenhum dado");
-        else {
-            setAllMap(null);
-            clearMarkersPositions();
-            var index = -1;
-
-            for (var i  in lines) {
-                var result = lines[i].split(';');
-                if(result[0].toUpperCase() === cidade.toUpperCase()){
-                    index++;
-                    var latLng = new google.maps.LatLng(result[1], result[2]);
-                    addMarkerSimple(latLng, lines[i]);
-                    addAlertsList(result, index);
-                }
-            }
-        }
-
-    });
-}
-
 
 function replaceSpecialChars(str)
 {
-    str = str.replace(/[ÀÁÂÃÄÅ]/,"A");
-    str = str.replace(/[àáâãäå]/,"a");
-    str = str.replace(/[ÈÉÊË]/,"E");
-    str = str.replace(/[Ç]/,"C");
-    str = str.replace(/[ç]/,"c");
-    str = str.replace(/[Íí]/,"i");
-    str = str.replace(/[Úú]/,"u");
-    str = str.replace(/[Óó]/,"o");
+    str = str.replace(/[Ã€ÃÃ‚ÃƒÃ„Ã…]/,"A");
+    str = str.replace(/[Ã Ã¡Ã¢Ã£Ã¤Ã¥]/,"a");
+    str = str.replace(/[ÃˆÃ‰ÃŠÃ‹]/,"E");
+    str = str.replace(/[Ã‡]/,"C");
+    str = str.replace(/[Ã§]/,"c");
+    str = str.replace(/[ÃÃ­]/,"i");
+    str = str.replace(/[ÃšÃº]/,"u");
+    str = str.replace(/[Ã“Ã³]/,"o");
 
     return str;
 }
@@ -263,12 +170,6 @@ function addAlertsList (linha, indice) {
         "</a>");
 }
 
-function ajustarAosPontos () {
-    for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
-        bounds.extend(markersPositions[a]);
-    }
-    map.fitBounds(bounds);
-}
 
 function mudaBotao(onOff) {
     if (onOff) {
@@ -309,11 +210,7 @@ function lerCookie(nomeCookie) {
         mudaClass($("#br").children("span"), checkOpcoes.br);
     }
 }
-/*
- function apagarCookie(strCookie) {
- $.cookie(strCookie, null);
- }
- */
+
 
 function gravarOpcoes() {
     var options = {};
@@ -363,8 +260,11 @@ $(document).ready(function () {
     $("#cbcidades").change(function (event) {
         $("#cbcidades option:selected" ).each(function () {
             if($(this).val()){
-                //createMarkersByCidade($(this).val());
-                findAllSitesByCidade($(this).val());
+                filterSitesByMunicipio($(this).val());
+                verificarAlarmes();
+                setInterval(function () {
+                    verificarAlarmes()
+                }, 15000);
             }
         });
     });
@@ -418,30 +318,6 @@ function limparPontos() {
     pontosMarkersPositions = [];
 }
 
-function verificaSelecaoTrajeto() {
-    if (checkOpcoes) {
-        if (checkOpcoes.tj == "ck ckon") {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
-}
-
-function verificaSelecaoPontos() {
-    if (checkOpcoes) {
-        if (checkOpcoes.pt == "ck ckon") {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
-}
-
 function limparCoordenadas() {
     for (var i = 0; i < linhas.length; i++) {
         if (linhas) {
@@ -450,116 +326,45 @@ function limparCoordenadas() {
     }
 }
 
-
-
-
-function findAllSitesByCidade(cidade){
-    // Recupera todos os sites da claro
-    $.ajax('../js/CLARO_SITES_LAT_LOG.csv').success(function(data){
-        if(data.length == 0){
-            console.log('Nenhum Registro foi encontrado');
-        }else{
-            allSites = data.split('\n');
-        }
-
-        for (var i  in allSites) {
-            var result = allSites[i].split(';');
-            if(result[0].toUpperCase() === cidade.toUpperCase()){
-                results.push(allSites[i]);
-            }
-        }
-        //console.log('----results' + results);
+function filterSitesByMunicipio(codMunicipio){
+   var resultado = sites.filter(function(data) {
+        var x = data[0];
+        console.log(x);
+        return x === codMunicipio.toUpperCase();
     });
-    console.log('----results' + results);
-    // Recupero ocorrencias
-    $.ajax('../js/AlarmesHistoricos_2016.csv').success(function(data){
-
-        if(data.length == 0){
-            console.log('Nenhum Registro foi encontrado');
-        }else{
-            alertas = data.split('\n');
-        }
-    });
-    console.log('----results' + results);
-    findAlertas();
-
+    sitesFiltro = resultado;
 }
 
 
-function findAlertas(){
-    console.log('----findAlertas' + results);
-    for(var i in results){
-        var site  = results[i];
+function successAlarmes(response) {
+    var dados = Papa.parse(response, {delimiter: ";"}).data;
+
+    for (var i in sitesFiltro) {
+        var site = sitesFiltro[i];
         var codSite = site[3];
-        // Retorna todas ocorrencias do site encotradas no arquivo de alertas
-        var resultado = alertas.filter(function(data){
-            var x = data.split(';')[3];
-            return x === codSite ;
+        var resultado = dados.filter(function (data) {
+            var x = data[3];
+            return x === codSite;
         });
-        console.log('----' + resultado);
-        if(resultado.length > 0){
-            results.push(resultado[resultado.length-1]);
-        }else{
-            results.push(site);
+
+        if (resultado.length > 0) {
+            results.push(resultado[resultado.length - 1]);
         }
     }
+    drawMarkers();
+    ajustarAosPontos();
 }
 
-/*function desenhaShape() {
-
-    if (verificaSelecaoTrajeto()) {
-
-        currentLine = $("#busLine").val();
-        $.ajax("http://dadosabertos.rio.rj.gov.br/apiTransporte/Apresentacao/csv/gtfs/onibus/percursos/gtfs_linha" + currentLine + "-shapes.csv")
-            .success(function (data, status, jqXHR) {
-                //fazer o shape do caminho do onibus
-                var obj = Papa.parse(data);
-
-                var arrayDados = obj.data;
-                //removo o cabeçalho
-                arrayDados.shift();
-
-                limparCoordenadas();
-
-                var ordens = [[]];
-                var indiceOrdens = 0;
-
-                var coordenadas = [];
-
-                for (var i = 0; i < arrayDados.length; i++) {
-                    var ponto = arrayDados[i];
-                    var lat = ponto[5];
-                    var lng = ponto[6];
-                    var ordem = ponto[3];
-
-                    var coordenada = new google.maps.LatLng(lat, lng)
-
-                    if (i > 0 && ordem == 0) {
-                        indiceOrdens++;
-                        ordens[indiceOrdens] = [];
-                    }
-
-                    ordens[indiceOrdens].push(coordenada);
-
-                }
-
-                for (var a = 0; a < ordens.length; a++) {
-                    var array = ordens[a];
-                    var cor = arrayCores[a];
-                    var caminho = new google.maps.Polyline({
-                        path: array,
-                        geodesic: true,
-                        strokeColor: cor,
-                        strokeOpacity: 1.0,
-                        strokeWeight: 3
-                    });
-
-                    caminho.setMap(map);
-                    linhas.push(caminho);
-                }
-            });
-
+function ajustarAosPontos () {
+    for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
+        bounds.extend(markersPositions[a]);
     }
-}*/
+    map.fitBounds(bounds);
+}
+
+
+
+
+
 
 

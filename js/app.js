@@ -72,6 +72,8 @@ var app = {
         infowindow = new google.maps.InfoWindow();
 
         createComboEstados();
+        carregarSites();
+
 
     },
     showDevicePosition: function (location) {

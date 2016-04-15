@@ -29,6 +29,7 @@ var sitesFiltro = [];
 function addMarker(latLng, result){
     markersPositions.push(latLng);
     var iconUrl;
+    console.log("--->"+  result[3] + result[6]);
     if (result[6] === undefined || result[6] !='') {
         iconUrl = "../img/antena_on.png";
     }else{
@@ -83,7 +84,7 @@ function drawMarkers() {
 }
 
 function clearAlertList(){
-    $("#alerts-list").html('');
+    $("#alerts-list").empty();
 }
 
 function errorAlarmes(response) {
@@ -157,8 +158,7 @@ function replaceSpecialChars(str)
 
 
 function markerClick(indice) {
-    console.log(indice);
-    google.maps.event.trigger(markers[indice], 'click');
+   google.maps.event.trigger(markers[indice], 'click');
 }
 
 function addAlertsList (linha, indice) {
@@ -329,7 +329,6 @@ function limparCoordenadas() {
 function filterSitesByMunicipio(codMunicipio){
    var resultado = sites.filter(function(data) {
         var x = data[0];
-        console.log(x);
         return x === codMunicipio.toUpperCase();
     });
     sitesFiltro = resultado;
@@ -338,7 +337,7 @@ function filterSitesByMunicipio(codMunicipio){
 
 function successAlarmes(response) {
     var dados = Papa.parse(response, {delimiter: ";"}).data;
-
+    results = [];
     for (var i in sitesFiltro) {
         var site = sitesFiltro[i];
         var codSite = site[3];

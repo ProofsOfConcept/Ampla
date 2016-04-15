@@ -34,13 +34,13 @@ function addMarker(latLng, result){
     });
 
 
-        content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-            "CÃ³digo: " + result[3] + "</br>" +
-            "EndereÃ§o: " + result[4] + "</br>" +
-                //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
-            "Data: " + result[5] + "</br>" +
-            "Data SoluÃ§Ã£o: " + result[6] + "</br>" +
-            "</div>";
+    content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
+        "Código: " + result[3] + "</br>" +
+        "Endereço: " + result[4] + "</br>" +
+            //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
+        "Data: " + result[5] + "</br>" +
+        "Data Solução: " + result[6] + "</br>" +
+        "</div>";
     attachMessage(marker, content, map);
     markers.push(marker);
 }
@@ -134,18 +134,17 @@ google.maps.Map.prototype.clearMarkers = function () {
 
 function replaceSpecialChars(str)
 {
-    str = str.replace(/[Ã€Ã?Ã‚ÃƒÃ„Ã…]/,"A");
-    str = str.replace(/[Ã Ã¡Ã¢Ã£Ã¤Ã¥]/,"a");
-    str = str.replace(/[ÃˆÃ‰ÃŠÃ‹]/,"E");
-    str = str.replace(/[Ã‡]/,"C");
-    str = str.replace(/[Ã§]/,"c");
-    str = str.replace(/[Ã?Ã­]/,"i");
-    str = str.replace(/[ÃšÃº]/,"u");
-    str = str.replace(/[Ã“Ã³]/,"o");
+    str = str.replace(/[ÀÁÂÃÄÅ]/,"A");
+    str = str.replace(/[àáâãäå]/,"a");
+    str = str.replace(/[ÈÉÊË]/,"E");
+    str = str.replace(/[Ç]/,"C");
+    str = str.replace(/[ç]/,"c");
+    str = str.replace(/[Íí]/,"i");
+    str = str.replace(/[Úú]/,"u");
+    str = str.replace(/[Óó]/,"o");
 
     return str;
 }
-
 
 function markerClick(indice) {
    google.maps.event.trigger(markers[indice], 'click');

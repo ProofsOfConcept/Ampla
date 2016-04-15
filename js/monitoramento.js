@@ -64,6 +64,7 @@ function drawMarkers() {
     setAllMap(null);
     clearMarkersPositions();
     clearAlertList();
+    deleteMarkers();
     for(var z in results) {
         var result = results[z];
         var latLng = new google.maps.LatLng(result[1], result[2]);

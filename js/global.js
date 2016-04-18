@@ -226,7 +226,7 @@ function createMarkersByCidade(cidade) {
 
 function replaceSpecialChars(str)
 {
-    str = str.replace(/[ÁÀÃÂÄ]/,"A");
+    /*str = str.replace(/[ÁÀÃÂÄ]/,"A");
     str = str.replace(/[áàãâä]/,"a");
     str = str.replace(/[éèêë]/,"e");
     str = str.replace(/[ÉÈÊË]/,"E");
@@ -236,7 +236,7 @@ function replaceSpecialChars(str)
     str = str.replace(/[óòõôö]/,"o");
     str = str.replace(/[ÚÙÛÜ]/,"U");
     str = str.replace(/[úùûü]/,"u");
-    str = str.replace(/[Ç]/,"C");
+    str = str.replace(/[Ç]/,"C");*/
 
     return str;
 }
@@ -259,10 +259,14 @@ function addAlertsList (linha, indice) {
 }
 
 function ajustarAosPontos () {
+    var hasMakers = false;
     for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
         bounds.extend(markersPositions[a]);
+        hasMakers = true;
     }
-    map.fitBounds(bounds);
+    if(hasMakers){
+        map.fitBounds(bounds);
+    }
 }
 
 function mudaBotao(onOff) {

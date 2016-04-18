@@ -53,6 +53,10 @@ body {
     background-color: #fff;
 }
 
+.ampla-brand {
+    padding: 0 15px;
+}
+
 @media(min-width:768px) {
     #page-wrapper {
         position: inherit;

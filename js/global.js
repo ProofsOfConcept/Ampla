@@ -83,9 +83,7 @@ function addMarker(location, data) {
 
 function addMarkerSimple(location, data) {
     markersPositions.push(location);
-    //var dataBR = data[0].substring(3,6) + data[0].substring(0,2) + data[0].substring(5);
-    //var gpsTime = new Date(Date.parse(dataBR));
-    var result = data.split(';');
+    var result = data;
     if (result[5]===undefined || result[5]) {
         iconUrl = "../img/antena_on.png";
     }else{
@@ -195,10 +193,27 @@ function createMarkers() {
 
 function createAllMakers(){
 
-    var location =  window.location.pathname;
-    var url = '../js/CLARO_SITES_LAT_LOG.csv';
+    //var location =  window.location.pathname;
+    //var url = '../js/CLARO_SITES_LAT_LOG.csv';
 
-    $.ajax(url).success(function (data) {
+    if(sites.length == 0){
+        console.log("nenhum dado");
+    }else{
+        setAllMap(null);
+        clearMarkersPositions();
+        for(var i in sites){
+            //console.log(sites[i]);
+            var latLng = new google.maps.LatLng(sites[i][1], sites[i][2]);
+            addMarkerSimple(latLng, sites[i]);
+            addAlertsList(sites, i);
+
+        }
+
+    }
+
+
+
+    /*$.ajax(url).success(function (data) {
         var resultado =  Papa.parse(data, {delimiter : ";"});
         var lines = data.split('\n');
         mudaBotao(false);
@@ -220,7 +235,7 @@ function createAllMakers(){
             }
         }
 
-    });
+    });*/
 }
 
 function createMarkersByCidade(cidade) {
@@ -537,9 +552,7 @@ function carregarSites(){
 }
 
 function successSites(response) {
-    //sites = Papa.parse(response, {delimiter: ";"}).data;
-    //console.log(sites);
-
+    sites = Papa.parse(response, {delimiter: ";"}).data;
     createAllMakers();
 }
 function errorSites(response) {

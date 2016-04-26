@@ -72,7 +72,7 @@ var app = {
         infowindow = new google.maps.InfoWindow();
 
         createComboEstados();
-        //carregarSites()
+        carregarSites()
         createAllMakers();
         setInterval(function () {
             verificarAlarmes()

@@ -193,6 +193,36 @@ function createMarkers() {
 
 }
 
+function createAllMakers(){
+
+    var location =  window.location.pathname;
+    var url = '../js/CLARO_SITES_LAT_LOG.csv';
+
+    $.ajax(url).success(function (data) {
+        var resultado =  Papa.parse(data, {delimiter : ";"});
+        var lines = data.split('\n');
+        mudaBotao(false);
+        if (data.length === 0)
+            console.log("nenhum dado");
+        else {
+            setAllMap(null);
+            clearMarkersPositions();
+            var index = -1;
+
+            for (var i  in lines) {
+                var result = lines[i].split(';');
+                //if(result[0].toUpperCase() === cidade.toUpperCase()){
+                    index++;
+                    var latLng = new google.maps.LatLng(result[1], result[2]);
+                    addMarkerSimple(latLng, lines[i]);
+                    addAlertsList(result, i);
+                //s}
+            }
+        }
+
+    });
+}
+
 function createMarkersByCidade(cidade) {
 
     var location =  window.location.pathname;
@@ -261,6 +291,7 @@ function addAlertsList (linha, indice) {
 function ajustarAosPontos () {
     var hasMakers = false;
     for (var a = 0, LtLgLen = markersPositions.length; a < LtLgLen; a++) {
+        console.log(markersPositions[a]);
         bounds.extend(markersPositions[a]);
         hasMakers = true;
     }
@@ -506,7 +537,10 @@ function carregarSites(){
 }
 
 function successSites(response) {
-    sites = Papa.parse(response, {delimiter: ";"}).data;
+    //sites = Papa.parse(response, {delimiter: ";"}).data;
+    //console.log(sites);
+
+    createAllMakers();
 }
 function errorSites(response) {
 }

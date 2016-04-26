@@ -61,7 +61,7 @@ var app = {
         var location = new google.maps.LatLng(-22.818943, -43.045118);
         map = new google.maps.Map(mapDiv, {
             center: location,
-            zoom: 6,
+            zoom: 8,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             streetViewControl: false,
@@ -72,7 +72,8 @@ var app = {
         infowindow = new google.maps.InfoWindow();
 
         createComboEstados();
-        carregarSites();
+        //carregarSites()
+        createAllMakers();
         setInterval(function () {
             verificarAlarmes()
         }, 15000);

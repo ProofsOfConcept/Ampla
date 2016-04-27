@@ -21,32 +21,7 @@ var pontosMarkersPositions = [];
 var estados;
 var sites =[];
 
-function addBikeMarker(location, data) {
-    bikeMarkersPositions.push(location);
 
-    var iconUrl = iconBase + "bikeriopin.png";
-    //"BAIRRO","ESTACAO","CODIGO","ENDERECO","NUMERO","LATITUDE","LONGITUDE"
-    var marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title: data[3],
-        icon: new google.maps.MarkerImage(iconUrl)
-    });
-
-    marker.info = new google.maps.InfoWindow({
-        content: '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-        "Bairro: " + data[0] + "</br>" +
-        "Estação: " + data[1] + "</br>" +
-        "Endereço: " + data[3] + "</br>" +
-        "</div>"
-    });
-    google.maps.event.addListener(marker, 'click', function () {
-        marker.info.close();
-        marker.info.open(map, marker);
-    });
-
-    bikeMarkers.push(marker);
-}
 
 function addMarker(location, data) {
     markersPositions.push(location);
@@ -81,7 +56,7 @@ function addMarker(location, data) {
 }
 
 
-function addMarkerSimple(location, data) {
+/*function addMarkerSimple(location, data) {
     markersPositions.push(location);
     var result = data;
     if (result[5]===undefined || result[5]) {
@@ -119,7 +94,7 @@ function addMarkerSimple(location, data) {
     attachMessage(marker, content, map);
 
     markers.push(marker);
-}
+}*/
 
 function createComboEstados() {
     $("#cbestados").html("");
@@ -192,9 +167,6 @@ function createMarkers() {
 }
 
 function createAllMakers(){
-
-    //var location =  window.location.pathname;
-    //var url = '../js/CLARO_SITES_LAT_LOG.csv';
 
     if(sites.length == 0){
         console.log("nenhum dado");
@@ -294,11 +266,11 @@ function markerClick(indice) {
 
 
 function addAlertsList (linha, indice) {
-    var icon = linha[6] != "" ? "fa-check" : "fa-times";
-    var classe  = linha[6] != "" ? "color:#00CB00" : "color:#E73131";
+    var icon = linha[indice][6] != "" ? "fa-check" : "fa-times";
+    var classe  = linha[indice][6] != "" ? "color:#00CB00" : "color:#E73131";
     $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
-        "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ linha[3] +
-        "<span class='pull-right text-muted small'><em>" + linha[6]+" </em>"+
+        "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ linha[indice][3] +
+        "<span class='pull-right text-muted small'><em>" + linha[indice][6]+" </em>"+
         "</span>"+
         "</a>");
 }
@@ -547,9 +519,9 @@ function desenhaShape() {
     }
 }
 
-function carregarSites(){
+/*function carregarSites(){
     $.ajax('../js/CLARO_SITES_LAT_LOG.csv').then(successSites,errorSites);
-}
+}*/
 
 function successSites(response) {
     sites = Papa.parse(response, {delimiter: ";"}).data;

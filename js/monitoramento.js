@@ -60,40 +60,12 @@ function verificarAlarmes() {
         $.ajax('../js/alarmeDiario.csv').then(successAlarmes, errorAlarmes);
     }else{
         createAllMakers();
-
     }
 }
 
 
 function createAllMakers(){
-
     $.ajax('../js/alarmeDiario.csv').then(successAlarmes, errorAlarmes);
-
-    /*if(sites.length == 0){
-        console.log("nenhum dado");
-    }else{
-        setAllMap(null);
-        clearMarkersPositions();
-        var index = -1;
-        for(var i in sites){
-
-                var resultado = results.filter(function (data) {
-                var x = data[3];
-                return x.trim() === sites[i][3].trim();
-            });
-
-            var alarme;
-
-            if (resultado.length > 0) {
-                alarme = resultado[resultado.length - 1];
-                var latLng = new google.maps.LatLng(sites[i][1], sites[i][2]);
-                addMarkerSimple(latLng, sites[i]);
-                addAlertsList(sites, index++);
-            }
-        }
-
-    }*/
-
 }
 
 function addMarkerSimple(location, site) {
@@ -109,7 +81,6 @@ function addMarkerSimple(location, site) {
     }
 
     if(alarme){
-
         if (alarme[6]===undefined || alarme[6] == "") {
             iconUrl = "../img/antena_off.png";
         }else{

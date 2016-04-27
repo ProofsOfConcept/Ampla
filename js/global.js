@@ -168,7 +168,7 @@ function createMarkers() {
 
 function createAllMakers(){
 
-    if(sites.length == 0){
+    /*if(sites.length == 0){
         console.log("nenhum dado");
     }else{
         setAllMap(null);
@@ -181,7 +181,7 @@ function createAllMakers(){
 
         }
 
-    }
+    }*/
 
 
 

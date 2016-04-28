@@ -74,10 +74,10 @@ var app = {
         createComboEstados();
         carregarSites();
         createAllMakers();
-        verificarAlarmes();
+        //verificarAlarmes();
         setInterval(function () {
             verificarAlarmes()
-        }, 15000);
+        }, 10000);
 
     },
     showDevicePosition: function (location) {

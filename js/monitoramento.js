@@ -56,8 +56,9 @@ function successSites(response) {
 
 function verificarAlarmes() {
     if(estadoSelecionado && cidadeSelecionada) {
-        clearAlertList();
-        $.ajax('../js/alarmeDiario.csv').then(successAlarmes, errorAlarmes);
+        //clearAlertList();
+        //$.ajax('../js/alarmeDiario.csv').then(successAlarmes, errorAlarmes);
+        findSitesByMunicipio();
     }else{
         createAllMakers();
     }
@@ -71,27 +72,25 @@ function createAllMakers(){
 function addMarkerSimple(location, site) {
     markersPositions.push(location);
 
-        var resultado = ocorrencias.filter(function (data) {
+    var resultado = ocorrencias.filter(function (data) {
         var x = data[3];
         return x.trim() === site[3].trim();
     });
+
     var alarme;
     if (resultado.length > 0) {
         alarme = resultado[resultado.length - 1];
     }
 
-    if(alarme){
-        if (alarme[6]===undefined || alarme[6] == "") {
+    iconUrl = "../img/antena_on.png";
+
+    if(alarme) {
+        if (alarme[6] === undefined || alarme[6] == "") {
             iconUrl = "../img/antena_off.png";
-        }else{
-            iconUrl= "../img/antena_on.png";
         }
-    }else{
-        iconUrl = "../img/antena_on.png";
     }
 
     var result = site;
-
     var marker = new google.maps.Marker({
         position: location,
         map: map,
@@ -99,24 +98,19 @@ function addMarkerSimple(location, site) {
         icon: new google.maps.MarkerImage(iconUrl)
     });
 
-
-
     var content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
         "Código: " + result[3] + "</br>" +
         "Endereço: " + result[4] + "</br>" +
         "</div>";
 
-    if(result[5]){
+    if(alarme){
 
-        content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-            "Código: " + result[3] + "</br>" +
-            "Endereço: " + result[4] + "</br>" +
-                //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
-            "Data: " + result[5] + "</br>" +
-            "Data Solução: " + result[6] + "</br>" +
-            "</div>";
+        content+="Data: " + alarme[5] + "</br>" +
+            "Data Solução: " + alarme[6] + "</br>";
+
     }
 
+    content+="</div>";
 
     attachMessage(marker, content, map);
 
@@ -219,13 +213,27 @@ function markerClick(indice) {
 }
 
 function addAlertsList (linha, indice) {
-    var icon = linha[indice][5] != undefined ? "fa-check" : "fa-times";
-    var classe  = linha[indice][5] != undefined ? "color:#00CB00" : "color:#E73131";
-    $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
-        "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ linha[indice][3] +
-        "<span class='pull-right text-muted small'><em>" + linha[indice][6]+" </em>"+
-        "</span>"+
-        "</a>");
+
+    var resultado = ocorrencias.filter(function (data) {
+        var x = data[3];
+        return x.trim() === linha[indice][3].trim();
+    });
+
+    var alarme;
+    if (resultado.length > 0) {
+        alarme = resultado[resultado.length - 1];
+    }
+
+    if(alarme){
+        var icon = alarme[5] != undefined ?  "fa-times": "fa-check" ;
+        var classe  = alarme[5] != undefined ? "color:#E73131" : "color:#00CB00";
+        $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
+            "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ alarme[3] +
+            "<span class='pull-right text-muted small'><em>" + alarme[6]+" </em>"+
+            "</span>"+
+            "</a>");
+    }
+
 }
 
 $(document).ready(function () {
@@ -235,6 +243,7 @@ $(document).ready(function () {
         $("#cbestados option:selected" ).each(function () {
             $("#cbcidades").html("");
             var indice = $(this).val();
+            estadoSelecionado = null;
             if(indice === "") {
                 $(".cb-cidades").fadeOut();
             } else {
@@ -276,6 +285,39 @@ function filterSitesByMunicipio(codMunicipio){
     sitesFiltro = resultado;
 }
 
+function findSitesByMunicipio(){
+    clearAlertList();
+
+    if(estadoSelecionado && cidadeSelecionada) {
+
+        results = [];
+        setAllMap(null);
+        clearMarkersPositions();
+
+        for(var i in sites){
+
+            if(sites[i][0] == cidadeSelecionada){
+                var latLng = new google.maps.LatLng(sites[i][1], sites[i][2]);
+                addMarkerSimple(latLng, sites[i]);
+                var resultado = ocorrencias.filter(function (data) {
+                    var x = data[3];
+                    return x.trim() === sites[i][3].trim();
+                });
+
+                var alarme;
+
+                if (resultado.length > 0) {
+                    alarme = resultado[resultado.length - 1];
+                    addAlertsList(sites, i);
+                }
+            }
+
+        }
+        ajustarAosPontos();
+    }
+
+}
+
 function successAlarmes(response) {
 
     ocorrencias = Papa.parse(response, {delimiter: ";"}).data;
@@ -296,10 +338,15 @@ function successAlarmes(response) {
 
         if (resultado.length > 0) {
             alarme = resultado[resultado.length - 1];
+            results.push(alarme);
             addAlertsList(sites, i);
         }
+
     }
-    ajustarAosPontos();
+    if(sitesFiltro[0] && results[0]) {
+        drawMarkers();
+        ajustarAosPontos();
+    }
 }
 
 

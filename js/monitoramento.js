@@ -286,13 +286,14 @@ function filterSitesByMunicipio(codMunicipio){
 }
 
 function findSitesByMunicipio(){
+    setAllMap(null);
+    clearMarkersPositions();
     clearAlertList();
+    deleteMarkers();
 
     if(estadoSelecionado && cidadeSelecionada) {
 
         results = [];
-        setAllMap(null);
-        clearMarkersPositions();
 
         for(var i in sites){
 
@@ -321,10 +322,13 @@ function findSitesByMunicipio(){
 function successAlarmes(response) {
 
     ocorrencias = Papa.parse(response, {delimiter: ";"}).data;
-    clearAlertList();
+
     results = [];
     setAllMap(null);
     clearMarkersPositions();
+    clearAlertList();
+    deleteMarkers();
+
 
     for(var i in sites){
         var latLng = new google.maps.LatLng(sites[i][1], sites[i][2]);

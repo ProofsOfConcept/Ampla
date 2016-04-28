@@ -15,7 +15,7 @@ var sites =[];
 var sitesFiltro = [];
 var cidadeSelecionada;
 var estadoSelecionado;
-var ocorrencias = [];
+var ocorrencias;
 
 
 function addMarker(latLng, result){
@@ -47,7 +47,14 @@ function addMarker(latLng, result){
 }
 
 function carregarSites(){
-        $.ajax('../js/CLARO_SITES_LAT_LOG.csv').then(successSites, errorSites);
+    $.ajax('../js/CLARO_SITES_LAT_LOG.csv').then(successSites,errorSites);
+}
+
+function carregaOcorrencias(){
+
+    $.ajax('../js/alarmeDiario.csv').success(function(data){
+        ocorrencias = Papa.parse(data, {delimiter: ";"}).data;
+    });
 }
 
 function successSites(response) {
@@ -55,68 +62,11 @@ function successSites(response) {
 }
 
 function verificarAlarmes() {
-    if(estadoSelecionado && cidadeSelecionada) {
-        //clearAlertList();
-        //$.ajax('../js/alarmeDiario.csv').then(successAlarmes, errorAlarmes);
-        findSitesByMunicipio();
-    }else{
-        createAllMakers();
-    }
-}
-
-
-function createAllMakers(){
     $.ajax('../js/alarmeDiario.csv').then(successAlarmes, errorAlarmes);
+    if(estadoSelecionado && cidadeSelecionada) {
+        clearAlertList();
+    }
 }
-
-function addMarkerSimple(location, site) {
-    markersPositions.push(location);
-
-    var resultado = ocorrencias.filter(function (data) {
-        var x = data[3];
-        return x.trim() === site[3].trim();
-    });
-
-    var alarme;
-    if (resultado.length > 0) {
-        alarme = resultado[resultado.length - 1];
-    }
-
-    iconUrl = "../img/antena_on.png";
-
-    if(alarme) {
-        if (alarme[6] === undefined || alarme[6] == "") {
-            iconUrl = "../img/antena_off.png";
-        }
-    }
-
-    var result = site;
-    var marker = new google.maps.Marker({
-        position: location,
-        map: map,
-        title:  " (" + result[3] + ")",
-        icon: new google.maps.MarkerImage(iconUrl)
-    });
-
-    var content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-        "Código: " + result[3] + "</br>" +
-        "Endereço: " + result[4] + "</br>" +
-        "</div>";
-
-    if(alarme){
-
-        content+="Data: " + alarme[5] + "</br>" +
-            "Data Solução: " + alarme[6] + "</br>";
-
-    }
-
-    content+="</div>";
-
-    attachMessage(marker, content, map);
-
-    markers.push(marker);
-}
-
 
 function drawMarkers() {
     setAllMap(null);
@@ -127,7 +77,7 @@ function drawMarkers() {
         var result = results[z];
         var latLng = new google.maps.LatLng(result[1], result[2]);
         addMarker(latLng, result);
-        addAlertsList(result, z);
+        //addAlertsList(result, z);
     }
 }
 
@@ -209,31 +159,17 @@ function replaceSpecialChars(str)
 }
 
 function markerClick(indice) {
-   google.maps.event.trigger(markers[indice], 'click');
+    google.maps.event.trigger(markers[indice], 'click');
 }
 
 function addAlertsList (linha, indice) {
-
-    var resultado = ocorrencias.filter(function (data) {
-        var x = data[3];
-        return x.trim() === linha[indice][3].trim();
-    });
-
-    var alarme;
-    if (resultado.length > 0) {
-        alarme = resultado[resultado.length - 1];
-    }
-
-    if(alarme){
-        var icon = alarme[5] != undefined ?  "fa-times": "fa-check" ;
-        var classe  = alarme[5] != undefined ? "color:#E73131" : "color:#00CB00";
-        $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
-            "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ alarme[3] +
-            "<span class='pull-right text-muted small'><em>" + alarme[6]+" </em>"+
-            "</span>"+
-            "</a>");
-    }
-
+    var icon = linha[6] != "" ? "fa-check" : "fa-times";
+    var classe  = linha[6] != "" ? "color:#00CB00" : "color:#E73131";
+    $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
+        "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ linha[3] +
+        "<span class='pull-right text-muted small'><em>" + linha[6]+" </em>"+
+        "</span>"+
+        "</a>");
 }
 
 $(document).ready(function () {
@@ -243,7 +179,6 @@ $(document).ready(function () {
         $("#cbestados option:selected" ).each(function () {
             $("#cbcidades").html("");
             var indice = $(this).val();
-            estadoSelecionado = null;
             if(indice === "") {
                 $(".cb-cidades").fadeOut();
             } else {
@@ -278,74 +213,62 @@ $(document).ready(function () {
 });
 
 function filterSitesByMunicipio(codMunicipio){
-   var resultado = sites.filter(function(data) {
+    var resultado = sites.filter(function(data) {
         var x = data[0];
         return x === codMunicipio.toUpperCase();
     });
     sitesFiltro = resultado;
 }
 
-function findSitesByMunicipio(){
-    setAllMap(null);
-    clearMarkersPositions();
-    clearAlertList();
-    deleteMarkers();
-
-    if(estadoSelecionado && cidadeSelecionada) {
-
-        results = [];
-
-        for(var i in sites){
-
-            if(sites[i][0] == cidadeSelecionada){
-                var latLng = new google.maps.LatLng(sites[i][1], sites[i][2]);
-                addMarkerSimple(latLng, sites[i]);
-                var resultado = ocorrencias.filter(function (data) {
-                    var x = data[3];
-                    return x.trim() === sites[i][3].trim();
-                });
-
-                var alarme;
-
-                if (resultado.length > 0) {
-                    alarme = resultado[resultado.length - 1];
-                    addAlertsList(sites, i);
-                }
-            }
-
-        }
-        ajustarAosPontos();
-    }
-
-}
-
 function successAlarmes(response) {
 
-    ocorrencias = Papa.parse(response, {delimiter: ";"}).data;
+    if(sitesFiltro!= ""){
+        teste(response);
+    }else{
 
-    results = [];
-    setAllMap(null);
-    clearMarkersPositions();
-    clearAlertList();
-    deleteMarkers();
+        var contador = 0;
+        for (var i in sites) {
+            var site = sites[i];
+            var codSite = site[3];
+            var resultado = ocorrencias.filter(function (data) {
+                var x = data[3];
+                return x === codSite;
+            });
 
 
-    for(var i in sites){
-        var latLng = new google.maps.LatLng(sites[i][1], sites[i][2]);
-        addMarkerSimple(latLng, sites[i]);
-        var resultado = ocorrencias.filter(function (data) {
-            var x = data[3];
-            return x.trim() === sites[i][3].trim();
-        });
+            if (resultado.length > 0) {
+                results.push(resultado[resultado.length - 1]);
+            }else{
 
-        var alarme;
+                var semAlarme =[site[0],site[1],site[2],site[3],"",""];
+                results.push(semAlarme);
+            }
 
-        if (resultado.length > 0) {
-            alarme = resultado[resultado.length - 1];
-            results.push(alarme);
-            addAlertsList(sites, i);
+            if(results[0]) {
+                drawMarkers();
+                ajustarAosPontos();
+            }
         }
 
+    }
+}
+
+
+function teste(response){
+
+    //var dados = Papa.parse(response, {delimiter: ";"}).data;
+    results = [];
+    for (var i in sitesFiltro) {
+        var site = sitesFiltro[i];
+        var codSite = site[3];
+        var resultado = ocorrencias.filter(function (data) {
+            var x = data[3];
+            return x === codSite;
+        });
+
+        if (resultado.length > 0) {
+            results.push(resultado[resultado.length - 1]);
+        }
     }
     if(sitesFiltro[0] && results[0]) {
         drawMarkers();

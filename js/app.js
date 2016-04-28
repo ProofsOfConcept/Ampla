@@ -73,8 +73,8 @@ var app = {
 
         createComboEstados();
         carregarSites();
-        createAllMakers();
-        //verificarAlarmes();
+        carregaOcorrencias();
+        verificarAlarmes();
         setInterval(function () {
             verificarAlarmes()
         }, 10000);

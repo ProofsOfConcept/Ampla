@@ -71,6 +71,7 @@ function verificarAlarmes(viaInterval) {
     if(estadoSelecionado && cidadeSelecionada) {
         clearAlertList();
     }
+    carregaOcorrencias();
     $.ajax('../js/alarmeDiario.csv').then(successAlarmes(viaInterval), errorAlarmes);
 }
 

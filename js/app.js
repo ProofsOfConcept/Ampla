@@ -27,9 +27,6 @@ var app = {
             });
         } else {
             app.createMap();
-
-
-
         }
     },
     geolocationSuccess: function (position) {
@@ -74,7 +71,7 @@ var app = {
         createComboEstados();
         carregarSites();
         carregaOcorrencias();
-        verificarAlarmes();
+        //verificarAlarmes();
         setInterval(function () {
             verificarAlarmes()
         }, 10000);

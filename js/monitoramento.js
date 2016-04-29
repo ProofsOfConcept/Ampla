@@ -123,10 +123,6 @@ function clearMarkersPositions() {
     markersPositions = [];
 }
 
-function showMarkers() {
-    setAllMap(map);
-}
-
 function deleteMarkers() {
     clearMarkers();
     markers = [];
@@ -213,14 +209,15 @@ $(document).ready(function () {
 });
 
 function filterSitesByMunicipio(codMunicipio){
-    var resultado = sites.filter(function(data) {
+    sitesFiltro = sites.filter(function(data) {
         var x = data[0];
         return x === codMunicipio.toUpperCase();
     });
-    sitesFiltro = resultado;
 }
 
 function successAlarmes(response) {
+
+    results = [];
 
     if(sitesFiltro!= ""){
         teste(response);
@@ -235,21 +232,17 @@ function successAlarmes(response) {
                 return x === codSite;
             });
 
-
             if (resultado.length > 0) {
                 results.push(resultado[resultado.length - 1]);
             }else{
-
                 var semAlarme =[site[0],site[1],site[2],site[3],"",""];
                 results.push(semAlarme);
             }
-
-            if(results[0]) {
-                drawMarkers();
-                ajustarAosPontos();
-            }
         }
-
+        if(results[0]) {
+            drawMarkers();
+            ajustarAosPontos();
+        }
     }
 }
 

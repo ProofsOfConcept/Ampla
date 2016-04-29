@@ -77,7 +77,9 @@ function drawMarkers() {
         var result = results[z];
         var latLng = new google.maps.LatLng(result[1], result[2]);
         addMarker(latLng, result);
-        //addAlertsList(result, z);
+        if(result[6] === "") {
+            addAlertsList(result, z);
+        }
     }
 }
 

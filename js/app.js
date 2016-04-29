@@ -71,10 +71,14 @@ var app = {
         createComboEstados();
         carregarSites();
         carregaOcorrencias();
-        //verificarAlarmes();
         setInterval(function () {
-            verificarAlarmes()
+            //timeout util.
+            verificarAlarmes();
         }, 10000);
+        setTimeout(function () {
+            //.5seg para rodar, esperar a pagina carregar
+            verificarAlarmes();
+        }, 500);
 
     },
     showDevicePosition: function (location) {

@@ -37,11 +37,17 @@ function addMarker(latLng, result){
 
     content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
         "Código: " + result[3] + "</br>" +
-        "Endereço: " + result[4] + "</br>" +
-            //"Hora: " + gpsTime.toLocaleString('pt-BR') + "</br>" +
-        "Data: " + result[5] + "</br>" +
-        "Data Solução: " + result[6] + "</br>" +
-        "</div>";
+        "Endereço:" + result[4] + "</br>";
+
+    if(result[5]){
+        content += "Data: " + result[5] + "</br>" ;
+    }
+
+    if(result[6]){
+        content += "Data Solução: " + result[6] + "</br>";
+    }
+
+    content += "</div>";
     attachMessage(marker, content, map);
     markers.push(marker);
 }
@@ -263,6 +269,8 @@ function teste(response){
 
         if (resultado.length > 0) {
             results.push(resultado[resultado.length - 1]);
+        }else{
+            results.push([site[0],site[1],site[2],site[3],"",""]);
         }
     }
     if(sitesFiltro[0] && results[0]) {

@@ -47,6 +47,8 @@ function addMarker(latLng, result){
         content += "Data Solução: " + result[6] + "</br>";
     }
 
+    content += "Município: " + result[0];
+
     content += "</div>";
     attachMessage(marker, content, map);
     markers.push(marker);
@@ -84,9 +86,9 @@ function drawMarkers() {
         var result = results[z];
         var latLng = new google.maps.LatLng(result[1], result[2]);
         addMarker(latLng, result);
-        if(result[6] === "") {
+        //if(result[6] === "") {
             addAlertsList(result, z);
-        }
+        //}
     }
 }
 
@@ -170,9 +172,12 @@ function markerClick(indice) {
 function addAlertsList (linha, indice) {
     var icon = linha[6] != "" ? "fa-check" : "fa-times";
     var classe  = linha[6] != "" ? "color:#00CB00" : "color:#E73131";
+
+    var dataSolucao = (linha[6] === undefined) ? "N/A" : linha[6];
+
     $("#alerts-list").append("<a onclick='markerClick(" + indice + ")' class='list-group-item alerts-list-item'>"+
         "<i class='fa " + icon + " fa-fw' style='"+classe+"'></i> "+ linha[3] +
-        "<span class='pull-right text-muted small'><em>" + linha[6]+" </em>"+
+        "<span class='pull-right text-muted small'><em>" + dataSolucao +" </em>"+
         "</span>"+
         "</a>");
 }

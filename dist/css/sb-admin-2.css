@@ -47,6 +47,11 @@ body {
     width: 100%;
 }
 
+.alerta-list{
+    height: 530px;
+    overflow-y: scroll;
+   }
+
 #page-wrapper {
     padding: 0 15px;
     min-height: 568px;

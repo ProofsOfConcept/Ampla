@@ -47,6 +47,8 @@ function addMarker(latLng, result){
         content += "Data Solução: " + result[6] + "</br>";
     }
 
+    content += "Município: " + result[0];
+
     content += "</div>";
     attachMessage(marker, content, map);
     markers.push(marker);
@@ -68,6 +70,7 @@ function successSites(response) {
 }
 
 function verificarAlarmes(viaInterval) {
+
     if(estadoSelecionado && cidadeSelecionada) {
         clearAlertList();
     }
@@ -183,6 +186,7 @@ $(document).ready(function () {
 
         $("#cbestados option:selected" ).each(function () {
             $("#cbcidades").html("");
+            sitesFiltro = "";
             var indice = $(this).val();
             if(indice === "") {
                 $(".cb-cidades").fadeOut();
@@ -225,11 +229,12 @@ function filterSitesByMunicipio(codMunicipio){
 }
 
 function successAlarmes(response) {
+
     results = [];
     if(sitesFiltro!= ""){
         teste(response);
     }else{
-
+        response = false;
         var contador = 0;
         for (var i in sites) {
             var site = sites[i];

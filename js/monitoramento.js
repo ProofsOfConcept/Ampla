@@ -216,9 +216,7 @@ function filterSitesByMunicipio(codMunicipio){
 }
 
 function successAlarmes(response) {
-
     results = [];
-
     if(sitesFiltro!= ""){
         teste(response);
     }else{

@@ -61,11 +61,11 @@ function successSites(response) {
     sites = Papa.parse(response, {delimiter: ";"}).data;
 }
 
-function verificarAlarmes() {
-    $.ajax('../js/alarmeDiario.csv').then(successAlarmes, errorAlarmes);
+function verificarAlarmes(viaInterval) {
     if(estadoSelecionado && cidadeSelecionada) {
         clearAlertList();
     }
+    $.ajax('../js/alarmeDiario.csv').then(successAlarmes(viaInterval), errorAlarmes);
 }
 
 function drawMarkers() {
@@ -203,7 +203,7 @@ $(document).ready(function () {
             if($(this).val()){
                 cidadeSelecionada = $(this).val();
                 filterSitesByMunicipio($(this).val());
-                verificarAlarmes();
+                verificarAlarmes(false);
             }
         });
     });
@@ -241,7 +241,9 @@ function successAlarmes(response) {
         }
         if(results[0]) {
             drawMarkers();
-            ajustarAosPontos();
+            if(!response) {
+                ajustarAosPontos();
+            }
         }
     }
 }
@@ -265,7 +267,9 @@ function teste(response){
     }
     if(sitesFiltro[0] && results[0]) {
         drawMarkers();
-        ajustarAosPontos();
+        if(!response) {
+            ajustarAosPontos();
+        }
     }
 }
 

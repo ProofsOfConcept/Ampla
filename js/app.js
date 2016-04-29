@@ -21,27 +21,25 @@ var app = {
         if (navigator.geolocation) {
             //app.createMap();
             browserSupportFlag = true;
-            navigator.geolocation.getCurrentPosition(function (position) {
-                app.geolocationSuccess(position),
-                    app.geolocationError
+
+            var latLong;
+            $.getJSON("http://ipinfo.io", function(ipinfo){
+                latLong = ipinfo.loc.split(",");
+                app.geolocationSuccess(latLong);
             });
         } else {
             app.createMap();
         }
     },
     geolocationSuccess: function (position) {
-        var lat = position.coords.latitude;
-        var lon = position.coords.longitude;
+
+        var lat = position[0];
+        var lon = position[1];
         userLocation = new google.maps.LatLng(lat, lon);
         app.createMap();
         app.showDevicePosition(userLocation);
         // espera a criação do mapa
         //setTimeout(createMarkers(), 100);
-    },
-    geolocationError: function (error) {
-
-        toastr.error('[ERROR ' + error.code + '] ' + error.message);
-        app.createMap();
     },
     createMap: function () {
         var mapDiv = document.getElementById("map_canvas");
@@ -73,11 +71,11 @@ var app = {
         carregaOcorrencias();
         setInterval(function () {
             //timeout util.
-            verificarAlarmes();
+            verificarAlarmes(true);
         }, 10000);
         setTimeout(function () {
             //.5seg para rodar, esperar a pagina carregar
-            verificarAlarmes();
+            verificarAlarmes(false);
         }, 500);
 
     },

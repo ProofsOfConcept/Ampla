@@ -74,7 +74,7 @@ function verificarAlarmes(viaInterval) {
         clearAlertList();
     }
     carregaOcorrencias();
-    $.ajax('../js/alarmeDiario.csv').then(successAlarmes(viaInterval), errorAlarmes);
+    $.ajax(url_aquivo_alarmes).then(successAlarmes(viaInterval), errorAlarmes);
 }
 
 function drawMarkers() {
@@ -247,10 +247,11 @@ function successAlarmes(response) {
             if (resultado.length > 0) {
                 results.push(resultado[resultado.length - 1]);
             }else{
-                var semAlarme =[site[0],site[1],site[2],site[3],"",""];
-                results.push(semAlarme);
+                //var semAlarme =[site[0],site[1],site[2],site[3],"",""];
+                //results.push(semAlarme);
             }
         }
+        console.log('----' + ocorrencias.length);
         if(results[0]) {
             drawMarkers();
             if(!response) {

@@ -36,8 +36,10 @@ function addMarker(latLng, result){
 
 
     content = '<div style="line-height:1.35;overflow:hidden;white-space:nowrap;">' +
-        "Código: " + result[3] + "</br>" +
-        "Endereço:" + result[4] + "</br>";
+        "Código: " + result[3] + "</br>"
+   // if( result[4].indexOf("/") === -1){
+        content += "Endereço: " + result[4] + "</br>" ;
+    //}
 
     if(result[5]){
         content += "Data: " + result[5] + "</br>" ;
@@ -59,8 +61,7 @@ function carregarSites(){
 }
 
 function carregaOcorrencias(){
-
-    $.ajax('../js/alarmeDiario.csv').success(function(data){
+    $.ajax(url_aquivo_alarmes).success(function(data){
         ocorrencias = Papa.parse(data, {delimiter: ";"}).data;
     });
 }
@@ -75,7 +76,7 @@ function verificarAlarmes(viaInterval) {
         clearAlertList();
     }
     carregaOcorrencias();
-    $.ajax('../js/alarmeDiario.csv').then(successAlarmes(viaInterval), errorAlarmes);
+    $.ajax(url_aquivo_alarmes).then(successAlarmes(viaInterval), errorAlarmes);
 }
 
 function drawMarkers() {

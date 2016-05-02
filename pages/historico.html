@@ -23,6 +23,9 @@
 
     <!-- Custom CSS -->
     <link href="../dist/css/sb-admin-2.css" rel="stylesheet">
+    
+    <!-- Custom CSS - Template Ampla POC -->
+    <link href="../dist/css/ampla.css" rel="stylesheet">
 
     <!-- Morris Charts CSS -->
     <link href="../bower_components/morrisjs/morris.css" rel="stylesheet">
@@ -55,7 +58,7 @@
 <div id="wrapper">
 
     <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+    <nav class="navbar navbar-ampla navbar-static-top" role="navigation" style="margin-bottom: 0">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
@@ -63,7 +66,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand ampla-brand" href="index.html">
+            <a class="navbar-brand ampla-brand" href="login.html">
                 <img src="../img/ampla.png" height="50" width="83">
             </a>
         </div>
@@ -409,7 +412,9 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Histórico</h1>
+            <br> </br>
+                <!--<h1 class="page-header">Histórico</h1>-->
+                <img src="../img/texto1.png" name="historico" height:"2" width:"2">
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -451,17 +456,20 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-lg-4">
-                <div class="panel panel-default position:fixed">
-                    <div class="panel-heading" >
+                <div class="panel panel-default">
+                    <div class="panel-heading">
                         <i class="fa fa-bell fa-fw"></i> Alertas Resolvidos
                     </div>
-                    <div class="alerta-list">
-                        <div class="list-group" id="alerts-list">
+                    <div class="panel-body">
+                        <div class="list-group notification-list" id="alerts-list">
                         </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
 
     </div>

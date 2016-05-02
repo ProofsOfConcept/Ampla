@@ -251,7 +251,7 @@ function successAlarmes(response) {
                 //results.push(semAlarme);
             }
         }
-        console.log('----' + ocorrencias.length);
+
         if(results[0]) {
             drawMarkers();
             if(!response) {

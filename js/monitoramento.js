@@ -240,18 +240,24 @@ function successAlarmes(response) {
         for (var i in sites) {
             var site = sites[i];
             var codSite = site[3];
-            var resultado = ocorrencias.filter(function (data) {
-                var x = data[3];
-                return x === codSite;
-            });
+            if(ocorrencias != undefined){
+                var resultado = ocorrencias.filter(function (data) {
+                    var x = data[3];
+                    return x === codSite;
+                });
 
-            if (resultado.length > 0) {
-                results.push(resultado[resultado.length - 1]);
+                if (resultado.length > 0) {
+                    results.push(resultado[resultado.length - 1]);
+                }else{
+                    var semAlarme =[site[0],site[1],site[2],site[3],"",""];
+                    results.push(semAlarme);
+                }
             }else{
                 var semAlarme =[site[0],site[1],site[2],site[3],"",""];
                 results.push(semAlarme);
             }
         }
+
         if(results[0]) {
             drawMarkers();
             if(!response) {

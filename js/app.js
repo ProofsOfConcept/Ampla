@@ -56,7 +56,7 @@ var app = {
         var location = new google.maps.LatLng(-22.818943, -43.045118);
         map = new google.maps.Map(mapDiv, {
             center: location,
-            zoom: 8,
+            zoom: 12,
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             mapTypeControl: false,
             streetViewControl: false,
@@ -76,7 +76,7 @@ var app = {
         setTimeout(function () {
             //.5seg para rodar, esperar a pagina carregar
             verificarAlarmes(false);
-        }, 500);
+        }, 10000);
 
     },
     showDevicePosition: function (location) {
